@@ -1,8 +1,11 @@
-import {Router} from 'express';
+import express from 'express';
+const router = express.Router();
 import produtoController from "../controllers/produto.controller.js";
+import uploadImage from '../middlewares/uploadimages.js';
 
-const produtoRoutes = Router();
+router.get('/produtos', produtoController.selecionarProduto);
+router.post('/produtos', uploadImage, produtoController.cadastrarProduto);
+router.put('/produtos', uploadImage, produtoController.atualizarProduto);
+router.delete('/produtos', produtoController.excluirProduto);
 
-produtoRoutes.post('/produtos/images', uploadImage, produtoController.upload);
-
-export default produtoRoutes;
+export default router;

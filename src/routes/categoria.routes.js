@@ -4,7 +4,7 @@ import categoriaController from "../controllers/categoria.controller.js";
 
 router.get('/categorias', categoriaController.selecionarCategoria);
 router.post('/categorias', categoriaController.cadastrarCategoria);
-router.put('/categorias/id:categorias', categoriaController.atualizarCategoria);
-router.delete('/categorias', categoriaController.excluirCategoria);
+router.put('/categorias/:idCategorias', categoriaController.atualizarCategoria);
+router.delete('/categorias/:idCategorias', categoriaController.excluirCategoria);
 
 export default categoriaRoutes;

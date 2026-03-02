@@ -1,4 +1,4 @@
-const {categoriaModel} = require('../models/categoria.model.js');
+const categoriaModel = require('../models/categoria.model.js');
 
 const categoriaController = {
     selecionarCategoria: async (req, res) => {
@@ -18,13 +18,14 @@ const categoriaController = {
 
     cadastrarCategoria: async (req, res) => {
         try{
-            const {idCategoria, descricaoCategoria, dataCad} = req.body;
+            const {descricao} = req.body;
 
-            if(!String(descricaoCategoria) || descricaoCategoria.length < 3 || dataCad < 0) {
+            if(typeof descricao !== 'string' || !descricao) {
 
-                return res.status(400).json({message: 'Forneça um identificador (ID) valido'});
+                return res.status(400).json({message: 'Dados invalidos'});
             }
-            const resultado = await categoriaModel.cadastrarCategorias(idCategoria, descricaoCategoria, dataCad);
+            
+            const resultado = await categoriaModel.cadastrarCategorias(descricao);
 
             if(resultado.affectedRows ===1 && resultado.insertId != 0) {
 

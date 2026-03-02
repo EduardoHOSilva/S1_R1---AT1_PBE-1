@@ -18,15 +18,17 @@ const produtoController = {
 
     cadastrarProduto: async (req, res) => {
         try{
-            const {nomeProduto, valorProduto, dataCad} = req.body;
+            const {nomeProduto, idCategoria} = req.body;
+
+            const valorProduto = Number(req.body.valorProduto);
 
             const vinculoImagem = '/uploads/images/${req.file.filename}';
 
-            if(typeof nomeProduto !== 'string' || nomeProduto.trim() === '' || typeof valorProduto !== 'number' || valorProduto < 0 ) {
+            if(!nomeProduto || !valorProduto || !idCategoria || typeof valorProduto !== 'number' || typeof nomeProduto !== 'string') {
 
                 return res.status(400).json({message: 'Dados inválidos. Verifique nome, valor e categoria.'});
             }
-            const resultado = await produtoModel.cadastrarProdutos(nomeProduto, valorProduto, dataCad);
+            const resultado = await produtoModel.cadastrarProdutos(idCategoria, nomeProduto, valorProduto, vinculoImagem);
 
             if(resultado.affectedRows ===1 && resultado.insertId != 0) {
 
@@ -44,10 +46,11 @@ const produtoController = {
     atualizarProduto: async (req, res) => {
         try{
             const idProduto = Number(req.params.idProduto);
-            let {} = req.body;
-            descricao = descricao.trim();
+            let {nomeProduto, valorProduto} = req.body;
+            
+            nomeProduto = descricao.trim();
 
-            if(!idProduto || !descricao || !valor || typeof idProduto !== 'number' || !isNaN(descricao) || isNaN(valor) || descricao.trim().length <3) {
+            if(!idProduto || !nomeProduto || typeof idProduto !== 'number' || !isNaN(nomeProduto) || !valorProduto || typeof valorProduto !== 'number') {
 
              return res.status(400).json({message: 'Verifique os dados enviados e tente novamente'});
 
@@ -57,10 +60,10 @@ const produtoController = {
             if(produtoAtual.length === 0) {
                 throw new Error('Registro não localizado');
             } 
-            const novaDescricao = descricao ?? produtoAtual[0].descricao;
+            const novoNome = nome ?? produtoAtual[0].nome;
             const novoValor = valor ?? produtoAtual[0].valor;
 
-            const resultado = await produtoModel.alterarProduto(idProduto, novaDescricao, novoValor);
+            const resultado = await produtoModel.alterarProduto(idProduto, novoNome, novoValor);
 
             if(resultado.changedRows === 0) {
                 throw new Error('Ocorreu um erro ao incluir o registro');
@@ -84,14 +87,13 @@ const produtoController = {
 
             }
 
-            const produtoSelecionado = await produtoModel.selecionarProdutosId(id);
-            console.log(produtoSelecionado);
+            const produtoSelecionado = await produtoModel.selecionarProdutos(id);
 
             if(produtoSelecionado.length === 0) {
                 throw new Error('Registro não localizado');
             }else{
 
-                const resultado = await produtoModel.deleteProduto(id);
+                const resultado = await produtoModel.deleteProdutos(id);
                 if(resultado.affectedRows === 1) {
                  res.status(200).json({ message: 'Produto excluido com sucesso.', data: resultado});
 
